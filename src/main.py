@@ -69,9 +69,9 @@ def main():
     entries = []
     signals = prepare_data()
 
+    train_eval_data, test_data = train_test_split(signals, test_size=test_size)
 
-    for sig in signals:
-        print(i := i + 1 if 'i' in dir() else 0)
+    for sig in train_eval_data:
         normal_normal = make_twins(sig, (None, None))
         fast_fast = make_twins(sig, (tachycardia, tachycardia))
         slow_slow = make_twins(sig, (bradycardia, bradycardia))
@@ -80,11 +80,10 @@ def main():
         slow_fast = make_twins(sig, (bradycardia, tachycardia))
         entries.extend([normal_normal, fast_fast, slow_slow, normal_fast, normal_slow, slow_fast])
 
-    train_eval_entries, test_entries = train_test_split(entries, test_size=test_size)
-    train_entries, eval_entries = train_test_split(train_eval_entries, test_size=valid_size)
+    train_entries, eval_entries = train_test_split(entries, test_size=valid_size)
     train_pairs(train_entries, eval_entries)
 
-    test_data = make_test_data(test_entries)
+    test_data = make_test_data(test_data)
     few_shot(test_data, shot_size)
 
 

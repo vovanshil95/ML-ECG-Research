@@ -22,7 +22,6 @@ def train_pairs(train_data, eval_data):
     batches = int(len(pairs) * thin_out_ratio) // batch_size
     criterion = torch.nn.BCELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
     model.train()
     for epoch in range(max_epoch):
         for i, (signal1, signal2, real_out) in enumerate(load_pairs(pairs, batch_size)):
@@ -34,7 +33,7 @@ def train_pairs(train_data, eval_data):
             print(f"iteration {batches * epoch + i + 1} of {batches * max_epoch}")
             if i % (batches // evaluation_freq) == 0 or i == batches - 1:
                 eval_loss = evaluate(eval_data, criterion)
-                print(f"loss on iteration {i}: {eval_loss}")
+                print(f"loss after {i + 1} iterations: {eval_loss}")
                 if save_model:
                     torch.save(model.state_dict(), f'result/trained/trained{i // (batches // evaluation_freq)}')
 

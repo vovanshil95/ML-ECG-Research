@@ -19,22 +19,14 @@ def load(entries, batch_size, thin_out_ratio=None):
     return batches
 
 
-def load_pairs(pairs, batch_size, thin_out_ratio=None):
-
-    if thin_out_ratio is None:
-        thin_out_ratio = 1
+def load_pairs(pairs, batch_size, thin_out_ratio=1):
 
     pairs = sample(pairs, int(len(pairs) * thin_out_ratio))
     shuffle(pairs)
 
-    batches = []
-
     for i in range(len(pairs) // batch_size):
-        batch = []
-        all_batch = pairs[i * batch_size: (i + 1) * batch_size]
-        batch.append(np.array([el[0] for el in all_batch]))
-        batch.append(np.array([el[1] for el in all_batch]))
-        batch.append(np.array([el[2] for el in all_batch]))
-        batches.append(batch)
+        slice_ = pairs[i * batch_size: (i + 1) * batch_size]
+        batch_x = np.transpose(np.array(list(map(lambda pair: pair[:2], slice_))), axes=(1, 0, 2, 3))
+        batch_y = list(map(lambda pair: pair[2], slice_))
 
-    return batches
+        yield [batch_x[0], batch_x[1], batch_y]

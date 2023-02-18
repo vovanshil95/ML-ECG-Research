@@ -45,7 +45,6 @@ def prepare_data(to_pairs=False, pairs_key=None):
                                    map(lambda file_name: file_name[:3], os.listdir(path)))))
     shuffle(signal_names)
 
-
     segment_signals = []
 
     for signal_name in signal_names:
