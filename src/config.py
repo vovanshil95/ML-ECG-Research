@@ -1,0 +1,10 @@
+batch_size = 4
+max_epoch = 1
+learning_rate = 0.001
+thin_out_ratio = 1
+data_path = './data/'
+save_model = False
+evaluation_freq = 4
+valid_size = 0.2
+test_size = 0.1
+shot_size = 5
