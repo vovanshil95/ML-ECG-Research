@@ -1,14 +1,9 @@
-from random import sample, shuffle
+from random import shuffle
 
 import numpy as np
 
 
-def load(entries, batch_size, thin_out_ratio=None):
-
-    if thin_out_ratio is None:
-        thin_out_ratio = 1
-
-    entries = sample(entries, int(len(entries) * thin_out_ratio))
+def load(entries, batch_size):
 
     batches = []
 
@@ -19,9 +14,8 @@ def load(entries, batch_size, thin_out_ratio=None):
     return batches
 
 
-def load_pairs(pairs, batch_size, thin_out_ratio=1):
+def load_pairs(pairs, batch_size):
 
-    pairs = sample(pairs, int(len(pairs) * thin_out_ratio))
     shuffle(pairs)
 
     for i in range(len(pairs) // batch_size):

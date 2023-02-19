@@ -1,4 +1,4 @@
-from random import shuffle
+from random import shuffle, sample
 
 import numpy as np
 import torch
@@ -6,7 +6,7 @@ from torch.nn.functional import cosine_similarity
 from sklearn.model_selection import train_test_split
 
 from preprocessing import prepare_data
-from config import valid_size, shot_size, test_size
+from config import valid_size, shot_size, test_size, thin_out_ratio
 from transformations import add_wave_noise, add_gauss_noise, tachycardia, bradycardia
 from train import train_pairs
 from model import model
@@ -68,10 +68,12 @@ def few_shot(data, shot_size):
 def main():
     entries = []
     signals = prepare_data()
+    signals = sample(signals, int(len(signals) * thin_out_ratio))
 
     train_eval_data, test_data = train_test_split(signals, test_size=test_size)
 
     for sig in train_eval_data:
+        print(i := i + 1 if 'i' in dir() else 0, 'of', len(train_eval_data))
         normal_normal = make_twins(sig, (None, None))
         fast_fast = make_twins(sig, (tachycardia, tachycardia))
         slow_slow = make_twins(sig, (bradycardia, bradycardia))

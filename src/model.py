@@ -1,8 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as f
 
-from config import batch_size
-
 
 class SiameseNet(nn.Module):
     def __init__(self):
