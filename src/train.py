@@ -21,7 +21,7 @@ def evaluate(entries, criterion):
 
 def train_pairs(train_data, eval_data):
     if max_iterations is None:
-        max_iterations_ = sys.maxint
+        max_iterations_ = sys.maxsize
     else:
         max_iterations_ = max_iterations
 
