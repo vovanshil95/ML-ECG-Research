@@ -2,3 +2,4 @@ venv/
 result/
 data/
 .idea/
+*.pyc
