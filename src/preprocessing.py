@@ -4,14 +4,11 @@ import requests
 import zipfile
 from random import shuffle
 
-from config import data_path
-
-DATASET_URL = 'https://physionet.org/static/published-projects/mitdb/mit-bih-arrhythmia-database-1.0.0.zip'
-DATASET_NAME = 'mit-bih-arrhythmia-database-1.0.0'
+from config import data_path, dataset_url, dataset_name
 
 
 def get_from_url():
-    response = requests.get(DATASET_URL)
+    response = requests.get(dataset_url)
     open('download.zip', "wb").write(response.content)
     zip_ref = zipfile.ZipFile('download.zip', 'r')
     zip_ref.extractall('../' + data_path)
@@ -36,7 +33,7 @@ def make_pairs(entries, pairs_key):
 
 def prepare_data(to_pairs=False, pairs_key=None):
 
-    path = '../' + data_path + DATASET_NAME + '/'
+    path = '../' + data_path + dataset_name + '/'
 
     if not os.path.exists(path):
         get_from_url()

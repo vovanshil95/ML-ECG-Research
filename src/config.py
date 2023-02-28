@@ -10,3 +10,5 @@ valid_size = 0.1
 test_size = 1/3
 shot_sizes = [1, 2, 3, 4, 5]
 min_eval_loss = 0.01
+dataset_url = 'https://physionet.org/static/published-projects/mitdb/mit-bih-arrhythmia-database-1.0.0.zip'
+dataset_name = 'mit-bih-arrhythmia-database-1.0.0'
