@@ -40,10 +40,10 @@ def make_test_data(signals):
     return test_data
 
 
-def few_shot(data, shot_size):
+def few_shot(data):
 
     result_table = [[]]
-    classes = ['normal', 'tachycardia', 'bradycardia']
+    classes = ['normal', 'infarction']
     result_table[0].append('shot_size')
     result_table[0].extend(['precision_' + class_ for class_ in classes])
     result_table[0].extend(['recall_' + class_ for class_ in classes])
@@ -52,22 +52,19 @@ def few_shot(data, shot_size):
     for shot_size in shot_sizes:
         normal_shot = torch.Tensor(np.array(list(map(lambda el: el[0],
                                                      filter(lambda el: el[1] == 0, data)))[:shot_size]))
-        tachycardic_shot = torch.Tensor(np.array(list(map(lambda el: el[0],
-                                                          filter(lambda el: el[1] == 1, data)))[:shot_size]))
-        bradycardic_shot = torch.Tensor(np.array(list(map(lambda el: el[0],
-                                                          filter(lambda el: el[1] == 2, data)))[:shot_size]))
+        infarction_shot = torch.Tensor(np.array(list(map(lambda el: el[0],
+                                                         filter(lambda el: el[1] == 1, data)))[:shot_size]))
 
         model.eval()
         normal_features = torch.mean(model.forward_once(normal_shot), dim=0)
-        tachycardic_features = torch.mean(model.forward_once(tachycardic_shot), dim=0)
-        bradycardic_features = torch.mean(model.forward_once(bradycardic_shot), dim=0)
+        infarction_features = torch.mean(model.forward_once(infarction_shot), dim=0)
 
         model_out = []
         real_out = []
 
         for entry in data:
             entry_features = model.forward_once(torch.unsqueeze(torch.tensor(entry[0]).float(), dim=0))
-            features = (normal_features, tachycardic_features, bradycardic_features)
+            features = (normal_features, infarction_features)
             most_similar = np.argmax(list(map(lambda f1, f2: cosine_similarity(f1, f2).detach().numpy(),
                                               features, [entry_features] * 3)))
             model_out.append(most_similar)
@@ -81,6 +78,6 @@ def few_shot(data, shot_size):
     df = pd.DataFrame(result_table[1:], columns=result_table[0])
     print(df)
 
-    if not os.path.exists('../result/'):
-        os.makedirs('../result')
-    df.to_csv('../result/result-values.csv')
+    if not os.path.exists('result/'):
+        os.makedirs('result')
+    df.to_csv('result/infarction-result-values.csv')
