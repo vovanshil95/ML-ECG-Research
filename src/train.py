@@ -1,3 +1,5 @@
+import os.path
+
 import torch
 from tqdm import tqdm
 
@@ -50,6 +52,8 @@ def pairs_train(train_data, eval_data):
                     eval_loss = evaluate(eval_data, criterion)
                     pbar.write(f"loss after {i + 1} iterations: {eval_loss}", )
                     if save_model:
+                        if not os.path.exists('result/trained/'):
+                            os.mkdir('result/trained/')
                         torch.save(model.state_dict(), f'result/trained/trained{i // (batches // evaluation_freq)}')
 
                     if eval_loss < min_eval_loss:

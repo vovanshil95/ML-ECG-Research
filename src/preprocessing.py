@@ -7,7 +7,7 @@ import zipfile
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 
-from config import data_path, dataset_url, dataset_name, test_size, valid_size, thin_out_ratio
+from config import data_path, dataset_url, dataset_name, thin_out_ratio, test_size, valid_size
 
 
 def get_from_url():

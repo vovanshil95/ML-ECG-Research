@@ -1,45 +1,68 @@
 import torch
+import matplotlib
 import matplotlib.pyplot as plot
 from sklearn.decomposition import PCA
 import numpy as np
+from umap import UMAP
 
 from loader import load
-from config import data_path, batch_size
-from preprocessing import prepare_data
+from config import batch_size
 from model import model
 
-signals = prepare_data(data_path)
 
-model.load_state_dict(torch.load('result/trained/trained1'))
+def get_embeddings(signals):
+    feature_vectors = []
+    model.eval()
+    for i, signal in enumerate(load(np.array(signals), batch_size)):
+        feature_vectors.extend(model.forward_once(torch.Tensor(signal)))
 
-feature_vectors = []
+    for i, _ in enumerate(feature_vectors):
+        feature_vectors[i] = feature_vectors[i].detach().numpy()
+    feature_vectors = np.array(feature_vectors)
 
-model.eval()
-for i, signal in enumerate(load(signals, batch_size)):
-
-    feature_vectors.extend(model.forward_once(torch.Tensor(signal)))
-    print(f"processed {(i+1) * batch_size} signals of 720")
-
-for i, _ in enumerate(feature_vectors):
-    feature_vectors[i] = feature_vectors[i].detach().numpy()
-feature_vectors = np.array(feature_vectors)
-
-torch.save(feature_vectors, 'result/feature_vectors')
+    return feature_vectors
 
 
-plot.figure(figsize=(12, 12))
+def plot_embeddings(embeddings, targets, fig_name):
+    plot.figure(figsize=(12, 12))
 
-pca = PCA(2)
-pca.fit(feature_vectors)
-compressed_features = pca.transform(feature_vectors)
+    pca = PCA(2)
+    pca.fit(embeddings)
+    compressed_features = pca.transform(embeddings)
 
-plot.scatter(compressed_features[:, 0], compressed_features[:, 1])
-plot.savefig('result/2d_p_val.png')
+    colors = matplotlib.colors.ListedColormap(['green', 'red'])
 
-pca = PCA(3)
-pca.fit(feature_vectors)
-compressed_features = pca.transform(feature_vectors)
+    plot.scatter(compressed_features[:, 0], compressed_features[:, 1],
+                 c=targets, cmap=colors)
 
-axes = plot.axes(projection='3d')
-axes.scatter3D(compressed_features[:, 0], compressed_features[:, 1], compressed_features[:, 2])
-plot.savefig('result/3d_p_val.png')
+    plot.savefig(f'result/PCA_2d_{fig_name}.png')
+    plot.close()
+
+    pca = PCA(3)
+    pca.fit(embeddings)
+    compressed_features = pca.transform(embeddings)
+
+    axes = plot.axes(projection='3d')
+    axes.scatter3D(compressed_features[:, 0], compressed_features[:, 1], compressed_features[:, 2],
+                   c=targets, cmap=colors)
+    plot.savefig(f'result/PCA_3d_{fig_name}.png')
+    plot.close()
+
+    reducer = UMAP()
+    compressed_features = reducer.fit_transform(embeddings)
+
+    plot.scatter(compressed_features[:, 0], compressed_features[:, 1],
+                 c=targets, cmap=colors)
+
+    plot.savefig(f'result/UMAP_2d_{fig_name}.png')
+    plot.close()
+
+    reducer = UMAP(n_components=3)
+    compressed_features = reducer.fit_transform(embeddings)
+
+    axes = plot.axes(projection='3d')
+    axes.scatter(compressed_features[:, 0], compressed_features[:, 1], compressed_features[:, 2],
+                 c=targets, cmap=colors)
+
+    plot.savefig(f'result/UMAP_3d_{fig_name}.png')
+    plot.close()

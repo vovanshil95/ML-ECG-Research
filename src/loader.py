@@ -5,13 +5,9 @@ import numpy as np
 
 def load(entries, batch_size):
 
-    batches = []
-
     for i in range(len(entries) // batch_size):
         batch = entries[i * batch_size: (i + 1) * batch_size]
-        batches.append(batch)
-
-    return batches
+        yield batch
 
 
 def load_pairs(pairs, batch_size):

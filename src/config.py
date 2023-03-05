@@ -1,10 +1,12 @@
+load_model = False
+load_from = None
 batch_size = 4
 max_epoch = 1
 max_iterations = None
 learning_rate = 0.001
 thin_out_ratio = 0.09
 data_path = 'data/'
-save_model = False
+save_model = True
 evaluation_freq = 10
 valid_size = 0.1
 test_size = 0.4
